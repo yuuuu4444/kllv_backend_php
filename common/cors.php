@@ -9,9 +9,12 @@ $allowed_origins = ALLOWED_ORIGINS;
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
 
 // 檢查來源是否存在於允許列表中
-if (in_array($origin, $allowed_origins)) {
-    header("Access-Control-Allow-Origin: " . $origin);
-}
+// if (in_array($origin, $allowed_origins)) {
+//     header("Access-Control-Allow-Origin: " . $origin);
+// }
+
+// 允許所有網域連線
+header("Access-Control-Allow-Origin: " . "*");
 
 // 設定其他 CORS 標頭
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, PATCH, OPTIONS");
