@@ -1,2 +1,3 @@
 # 忽略包含敏感資訊的本地設定檔
-/common/config.php
+/common/local/config.php
+/common/server/config_g5.php
