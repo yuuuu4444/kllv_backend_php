@@ -1,0 +1,47 @@
+<?php
+  // 錯誤回報設定
+  error_reporting(E_ALL);
+  ini_set("display_errors",1);
+  
+  // 設定回傳 Content-Type 為 JSON
+  header('Content-Type: application/json; charset=utf-8');
+
+  // 引入環境初始化檔案，連線資料庫
+  require_once __DIR__ . '/../../common/env_init.php';
+
+  // 僅允許 GET　方法，否則回傳 405 Method Not Allowed
+  if ($_SERVER["REQUEST_METHOD"] !== "GET") {
+      http_response_code(405);
+      echo json_encode(['status' => 'error', 'message' => 'Method not allowed']);
+      exit();
+  }
+
+  // 準備 SQL 語句
+  $sql = "SELECT * FROM kllv_db.news
+          ORDER BY news_no DESC";
+  // 預備 SQL 語句，執行，綁定查詢結果
+  $stmt = $mysqli->prepare($sql);
+  $stmt->execute();
+  $stmt->bind_result($news_no, $title, $category_no, $image, $content, $published_at, $status);
+
+  // 取得查詢結果
+  $data = [];
+  while ($stmt->fetch()) {
+  $data[] = [
+      'news_no' => $news_no,
+      'title' => $title,
+      'category_no' => $category_no,
+      'image' => $image,
+      'content' => $content, // HTML
+      'published_at' => $published_at,
+      'status' => $status,
+  ];
+  }
+
+  // 輸出 JSON
+  echo json_encode(['status' => 'success', 'data' => $data], JSON_UNESCAPED_UNICODE);
+
+  // 關閉資料庫連線
+  $stmt->close();
+  $mysqli->close();
+?>
