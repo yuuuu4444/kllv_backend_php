@@ -1,4 +1,4 @@
--- MySQL dump 10.13  Distrib 8.0.43, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.42, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: kllv_db
 -- ------------------------------------------------------
@@ -38,6 +38,7 @@ CREATE TABLE `admin` (
 
 LOCK TABLES `admin` WRITE;
 /*!40000 ALTER TABLE `admin` DISABLE KEYS */;
+INSERT INTO `admin` VALUES ('admin_01','後台管理員','test123','2025-08-19 08:54:34',1);
 /*!40000 ALTER TABLE `admin` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -578,7 +579,7 @@ CREATE TABLE `users` (
   `fullname` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
   `nickname` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
   `password` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `profile_image` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'default image',
+  `profile_image` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '/uploads/avatars/default_avatar.png',
   `phone_number` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
   `email` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
   `id_number` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL,
@@ -602,6 +603,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
+INSERT INTO `users` VALUES ('user_account_001','Komod·Mayaw','測試','test123456','/uploads/avatars/default_avatar.png','0987654321','test1@gmail.com','H1212345678','1980-02-28','N',101,0,1,0,'2025-08-18 16:34:57'),('user_account_002','Arik·Mayaw','小艾','test223456','/uploads/avatars/default_avatar.png','0988456789','test2@gmail.com','A223456789','2005-05-10','M',101,1,1,0,'2025-08-19 08:47:13');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -620,7 +622,7 @@ CREATE TABLE `users_households` (
   PRIMARY KEY (`household_no`),
   KEY `user_id_idx` (`creator_id`),
   CONSTRAINT `fk_users_households_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=102 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -629,6 +631,7 @@ CREATE TABLE `users_households` (
 
 LOCK TABLES `users_households` WRITE;
 /*!40000 ALTER TABLE `users_households` DISABLE KEYS */;
+INSERT INTO `users_households` VALUES (101,'桃園市中壢區空瀧浪里快樂街1479號8樓-3','user_account_001',1);
 /*!40000 ALTER TABLE `users_households` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -669,6 +672,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-08-17 15:09:10
-
-/*以下自行新增的假資料指令 */;
+-- Dump completed on 2025-08-19  8:55:37
