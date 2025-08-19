@@ -42,7 +42,7 @@
       $input['category_no'],
       $input['image'],
       $input['content'],       // HTML
-      $input['published_at'],  // 前端送的時間
+      $input['published_at'],
       $input['status']
   );
 
