@@ -37,14 +37,14 @@ ini_set("display_errors",1);
   // 預備 SQL 語句，綁定參數
   $stmt = $mysqli->prepare($sql);
   $stmt->bind_param(
-      "isisssi",
-      $input['news_no'],
+      "sisssii",
       $input['title'],
       $input['category_no'],
       $input['image'],
       $input['content'],       // HTML
       $input['published_at'],
       $input['status'],
+      $input['news_no'],
       
   );
 
