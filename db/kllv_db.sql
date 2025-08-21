@@ -443,7 +443,7 @@ CREATE TABLE `news` (
   `image` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `content` varchar(1000) COLLATE utf8_unicode_ci NOT NULL,
   `published_at` date NOT NULL,
-  `status` int(11) NOT NULL DEFAULT '0',
+  `status` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`news_no`),
   KEY `category_no_idx` (`category_no`),
   CONSTRAINT `fk_news_category_no` FOREIGN KEY (`category_no`) REFERENCES `news_categories` (`category_no`)
