@@ -2,6 +2,16 @@
 error_reporting(E_ALL);
 ini_set("display_errors",1);
 
+// Session 安全性設定
+ini_set('session.cookie_httponly', 1);
+ini_set('session.use_only_cookies', 1);
+ini_set('session.cookie_secure', 1);
+session_set_cookie_params([
+    'samesite' => 'Strict'
+]);
+
+session_start();
+
 require_once __DIR__ . '/../../common/env_init.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -44,8 +54,21 @@ if ($stmt->fetch()) {
         echo json_encode(['status'=>'error','message'=>'帳號尚未啟用'], JSON_UNESCAPED_UNICODE);
         exit;
     }
-    // 成功登入回傳token...
-    echo json_encode(['status'=>'success','message'=>'登入成功','data'=>['user_id'=>$user_id]], JSON_UNESCAPED_UNICODE);
+    
+    // 啟動 session
+    session_start();
+    $_SESSION['user_id'] = $user_id;
+    $_SESSION['logged_in'] = true;
+    
+    echo json_encode([
+        'status' => 'success',
+        'message' => '登入成功',
+        'data' => [
+            'user' => [
+                'user_id' => $user_id
+            ]
+        ]
+    ], JSON_UNESCAPED_UNICODE);
 } else {
     http_response_code(401);
     echo json_encode(['status'=>'error','message'=>'帳號或密碼錯誤'], JSON_UNESCAPED_UNICODE);

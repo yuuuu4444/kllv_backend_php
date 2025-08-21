@@ -2,6 +2,16 @@
 error_reporting(E_ALL);
 ini_set("display_errors",1);
 
+// Session 安全性設定
+ini_set('session.cookie_httponly', 1);
+ini_set('session.use_only_cookies', 1);
+ini_set('session.cookie_secure', 1);
+session_set_cookie_params([
+    'samesite' => 'Strict'
+]);
+
+session_start();
+
 require_once __DIR__ . '/../../common/env_init.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
