@@ -27,7 +27,7 @@ CREATE TABLE `admin` (
   `fullname` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
   `password` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `created_at` datetime NOT NULL,
-  `is_active` tinyint(4) NOT NULL DEFAULT '1',
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`admin_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -61,7 +61,7 @@ CREATE TABLE `community_comments` (
   KEY `user_id_idx` (`author_id`),
   CONSTRAINT `fk_community_comments_author_id` FOREIGN KEY (`author_id`) REFERENCES `users` (`user_id`),
   CONSTRAINT `fk_community_comments_post_no` FOREIGN KEY (`post_no`) REFERENCES `community_posts` (`post_no`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=303 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -70,6 +70,7 @@ CREATE TABLE `community_comments` (
 
 LOCK TABLES `community_comments` WRITE;
 /*!40000 ALTER TABLE `community_comments` DISABLE KEYS */;
+INSERT INTO `community_comments` VALUES (301,101,'【測試】這是我對正常貼文的回覆','user_account_001',0,'2025-08-22 19:23:47'),(302,102,'【測試】這是我對被檢舉貼文的回覆','user_account_001',0,'2025-08-22 19:23:47');
 /*!40000 ALTER TABLE `community_comments` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -128,7 +129,7 @@ CREATE TABLE `community_posts` (
   KEY `category_id_idx` (`category_no`),
   CONSTRAINT `fk_community_posts_author_id` FOREIGN KEY (`author_id`) REFERENCES `users` (`user_id`),
   CONSTRAINT `fk_community_posts_category_no` FOREIGN KEY (`category_no`) REFERENCES `community_posts_categories` (`category_no`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=103 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -137,6 +138,7 @@ CREATE TABLE `community_posts` (
 
 LOCK TABLES `community_posts` WRITE;
 /*!40000 ALTER TABLE `community_posts` DISABLE KEYS */;
+INSERT INTO `community_posts` VALUES (101,'【測試】這是一篇我發布的正常貼文',1,'/uploads/community/post_default/community_banner.png','這是貼文的內容...','user_account_001',0,'2025-08-22 19:23:47',NULL),(102,'【測試】這是一篇會被檢舉的貼文',2,'/uploads/community/post_default/community_banner.png','這篇貼文的內容違反了規定...','user_account_001',0,'2025-08-22 19:23:47',NULL);
 /*!40000 ALTER TABLE `community_posts` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -211,7 +213,7 @@ CREATE TABLE `community_posts_reports` (
   CONSTRAINT `fk_community_posts_reports_category_no` FOREIGN KEY (`category_no`) REFERENCES `community_posts_reports_categories` (`category_no`),
   CONSTRAINT `fk_community_posts_reports_post_no` FOREIGN KEY (`post_no`) REFERENCES `community_posts` (`post_no`),
   CONSTRAINT `fk_community_posts_reports_reporter_id` FOREIGN KEY (`reporter_id`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=202 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -220,6 +222,7 @@ CREATE TABLE `community_posts_reports` (
 
 LOCK TABLES `community_posts_reports` WRITE;
 /*!40000 ALTER TABLE `community_posts_reports` DISABLE KEYS */;
+INSERT INTO `community_posts_reports` VALUES (201,102,1,'user_account_002','2025-08-22 19:23:47',0);
 /*!40000 ALTER TABLE `community_posts_reports` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -272,7 +275,7 @@ CREATE TABLE `events` (
   PRIMARY KEY (`event_no`),
   KEY `category_no_idx` (`category_no`),
   CONSTRAINT `fk_events_category_no` FOREIGN KEY (`category_no`) REFERENCES `events_categories` (`category_no`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -281,7 +284,7 @@ CREATE TABLE `events` (
 
 LOCK TABLES `events` WRITE;
 /*!40000 ALTER TABLE `events` DISABLE KEYS */;
-INSERT INTO `events` VALUES (1,'梨山林輕健行_test','桃園市中壢區復興路46號9樓',2,'https://i.imgur.com/abc.jpg','為了讓大家走出戶外，感受大自然的魅力，我們特別規劃了「梨山林輕健行」活動，帶領各位走進梨山的迷人山林，享受清新空氣與壯麗景色。這條路線適合各年齡層的參加者，無論是初學者還是有健行經驗的朋友，都能輕鬆參與，感受步行中的寧靜與放鬆。\\n活動將在專業領隊的帶領下，穿越風景如畫的林間小徑，途中將設有數個休息點，並介紹當地的自然景觀與生態知識。參加者除了能提升健康體能，還能與社區居民一起享受親近大自然的樂趣，建立彼此間的聯繫與友誼。\\n我們鼓勵大家穿著舒適的運動鞋，攜帶水壺、輕便餐點以及防曬用品，一起來放鬆心情，度過愉快的一天。快來報名參加，一同踏上這段美麗的梨山林輕健行吧！',400,NULL,200,'2025-10-01 00:00:00','2025-10-02 00:00:00','2025-09-25','2025-08-16',0);
+INSERT INTO `events` VALUES (1,'梨山林輕健行_test','桃園市中壢區復興路46號9樓',2,'https://i.imgur.com/abc.jpg','為了讓大家走出戶外，感受大自然的魅力，我們特別規劃了「梨山林輕健行」活動，帶領各位走進梨山的迷人山林，享受清新空氣與壯麗景色。這條路線適合各年齡層的參加者，無論是初學者還是有健行經驗的朋友，都能輕鬆參與，感受步行中的寧靜與放鬆。\\n活動將在專業領隊的帶領下，穿越風景如畫的林間小徑，途中將設有數個休息點，並介紹當地的自然景觀與生態知識。參加者除了能提升健康體能，還能與社區居民一起享受親近大自然的樂趣，建立彼此間的聯繫與友誼。\\n我們鼓勵大家穿著舒適的運動鞋，攜帶水壺、輕便餐點以及防曬用品，一起來放鬆心情，度過愉快的一天。快來報名參加，一同踏上這段美麗的梨山林輕健行吧！',400,NULL,200,'2025-10-01 00:00:00','2025-10-02 00:00:00','2025-09-25','2025-08-16',0),(10,'【測試】社區健行一日遊','【測試】幸福山步道',2,NULL,'這是一個測試用的健行活動',200,NULL,50,'2025-10-10 08:00:00','2025-10-10 17:00:00','2025-09-30','2025-08-22',0);
 /*!40000 ALTER TABLE `events` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -335,7 +338,7 @@ CREATE TABLE `events_regs` (
   CONSTRAINT `fk_events_regs_event_no` FOREIGN KEY (`event_no`) REFERENCES `events` (`event_no`),
   CONSTRAINT `fk_events_regs_participant_id` FOREIGN KEY (`participant_id`) REFERENCES `users` (`user_id`),
   CONSTRAINT `fk_events_regs_payment_no` FOREIGN KEY (`payment_no`) REFERENCES `events_regs_payments` (`payment_no`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -344,6 +347,7 @@ CREATE TABLE `events_regs` (
 
 LOCK TABLES `events_regs` WRITE;
 /*!40000 ALTER TABLE `events_regs` DISABLE KEYS */;
+INSERT INTO `events_regs` VALUES (20,10,'user_account_001',2,400,1,NULL,'2025-08-22 19:23:36',2);
 /*!40000 ALTER TABLE `events_regs` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -417,7 +421,7 @@ CREATE TABLE `events_regs_plist` (
   KEY `fk_events_regs_plists_participant_idx` (`participant_id`),
   CONSTRAINT `fk_events_regs_plists_participant_id` FOREIGN KEY (`participant_id`) REFERENCES `users` (`user_id`),
   CONSTRAINT `fk_events_regs_plists_reg_no` FOREIGN KEY (`reg_no`) REFERENCES `events_regs` (`reg_no`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -426,6 +430,7 @@ CREATE TABLE `events_regs_plist` (
 
 LOCK TABLES `events_regs_plist` WRITE;
 /*!40000 ALTER TABLE `events_regs_plist` DISABLE KEYS */;
+INSERT INTO `events_regs_plist` VALUES (30,20,'user_account_001','0988123456','H123456789','1980-02-28 00:00:00','緊急聯絡人A','0987654321','配偶'),(31,20,'user_account_002','0988456789','A223456789','2005-05-10 00:00:00','緊急聯絡人A','0987654321','配偶');
 /*!40000 ALTER TABLE `events_regs_plist` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -443,7 +448,7 @@ CREATE TABLE `news` (
   `image` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `content` varchar(1000) COLLATE utf8_unicode_ci NOT NULL,
   `published_at` date NOT NULL,
-  `status` tinyint(4) NOT NULL DEFAULT '0',
+  `status` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`news_no`),
   KEY `category_no_idx` (`category_no`),
   CONSTRAINT `fk_news_category_no` FOREIGN KEY (`category_no`) REFERENCES `news_categories` (`category_no`)
@@ -506,7 +511,7 @@ CREATE TABLE `repair` (
   KEY `user_id_idx` (`reporter_id`),
   CONSTRAINT `fk_repair_category_no` FOREIGN KEY (`category_no`) REFERENCES `repair_categories` (`category_no`),
   CONSTRAINT `fk_repair_reporter_id` FOREIGN KEY (`reporter_id`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -515,6 +520,7 @@ CREATE TABLE `repair` (
 
 LOCK TABLES `repair` WRITE;
 /*!40000 ALTER TABLE `repair` DISABLE KEYS */;
+INSERT INTO `repair` VALUES (1,'【測試】里民活動中心前路口',1,'路燈從昨晚開始閃爍不停，影響交通安全。','user_account_001','2025-07-04',NULL,NULL,0),(2,'【測試】幸福公園兒童遊樂區',2,'溜滑梯有裂痕，有安全疑慮。','user_account_001','2025-05-20','已聯系廠商進行更換，預計下周一完成。','2025-05-21',2),(3,'【測試】中正路與和平路交叉口',3,'路面有一個小坑洞。','user_account_001','2025-04-15','經查此路段非本里管轄範圍，已轉報區公所處理。','2025-04-16',3);
 /*!40000 ALTER TABLE `repair` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -619,7 +625,7 @@ CREATE TABLE `users_households` (
   `household_no` int(11) NOT NULL AUTO_INCREMENT,
   `address` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `creator_id` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `status` tinyint(4) NOT NULL DEFAULT '0',
+  `status` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`household_no`),
   KEY `user_id_idx` (`creator_id`),
   CONSTRAINT `fk_users_households_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`user_id`)
@@ -673,4 +679,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-08-21 23:55:15
+-- Dump completed on 2025-08-22 19:35:52
