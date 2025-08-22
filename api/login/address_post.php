@@ -21,17 +21,8 @@
 
   // 檢查必填欄位
   $requiredFields = [
-    'user_id',
-    'fullname',
-    'nickname',
-    'password',
-    'phone_number',
-    'email',
-    'id_number',
-    'birth_date',
-    'gender',
-    'household_no',
-    'role_type'
+    'address',
+    'status'
 ];
   foreach ($requiredFields as $field) {
       if (!isset($input[$field])) {
@@ -42,26 +33,15 @@
   }
 
   // 準備 SQL 語句
-  $sql = "INSERT INTO kllv_db.users (user_id, fullname, nickname, password, phone_number, email, id_number, birth_date, gender, household_no, role_type, created_at)
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+  $sql = "INSERT INTO kllv_db.users_households (address, status)
+          VALUES (?, ?)";
 
   // 預備 SQL 語句，綁定參數
   $stmt = $mysqli->prepare($sql);
-  $created_at = date('Y-m-d H:i:s');
   $stmt->bind_param(
-      "sssssssssiis",  // 12個參數：s=string, i=integer
-      $input['user_id'],
-      $input['fullname'],
-      $input['nickname'],
-      $input['password'],       
-      $input['phone_number'],
-      $input['email'],
-      $input['id_number'],
-      $input['birth_date'],
-      $input['gender'],
-      $input['household_no'],
-      $input['role_type'],
-      $input['created_at']
+      "si",  // 3個參數：s=string, i=integer
+      $input['address'],
+      $input['status']
   );
 
   // 執行
@@ -70,18 +50,8 @@
         "status" => "success", 
         "message" => "新增成功",
         "data" => [
-            "user_id"      => $input['user_id'],
-            "fullname"     => $input['fullname'],
-            "nickname"     => $input['nickname'],
-            "password"     => $input['password'],
-            "phone_number" => $input['phone_number'],
-            "email"        => $input['email'],
-            "id_number"    => $input['id_number'],
-            "birth_date"   => $input['birth_date'],
-            "gender"       => $input['gender'],
-            "household_no" => $input['household_no'],
-            "role_type"    => $input['role_type'],
-            "created_at"   => $created_at
+            "address"      => $input['address'],
+            "status"     => $input['status']
         ]
     ], JSON_UNESCAPED_UNICODE);
   } else {
