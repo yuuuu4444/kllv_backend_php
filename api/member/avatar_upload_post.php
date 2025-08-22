@@ -5,9 +5,9 @@ require_once __DIR__ . '/../../common/env_init.php';
 
 
 header('Content-Type: application/json; charset=utf-8');
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+if ($_SERVER['REQUEST_METHOD'] !== 'POST')  {
     http_response_code(405);
-    echo json_encode(["status" => "error", "message" => "不支援的請求方法"]);
+    echo json_encode(["status" => "error", "message" => "僅支援 POST 方法"]);
     exit;
 }
 
