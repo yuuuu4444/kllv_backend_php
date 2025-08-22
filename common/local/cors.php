@@ -19,9 +19,12 @@ if ($origin && in_array($origin, $allowed_origins, true)) {
 // 允許所有網域連線
 // header("Access-Control-Allow-Origin: " . "*");
 
-// 設定其他 CORS 標頭
+
+// 允許的 HTTP 方法 
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, PATCH, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type, Authorization"); // 建議加上 Authorization，未來做登入驗證會用到
+
+// 允許的請求標頭 (Content-Type 是為了 JSON，Authorization 是為了未來登入)
+header("Access-Control-Allow-Headers: Content-Type, Authorization"); 
 
 // 如果是預檢請求，直接結束
 if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
