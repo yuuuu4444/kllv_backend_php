@@ -60,17 +60,26 @@ try {
     }
 
     // 密碼加密
-    $hashed_password = password_hash($data['password'], PASSWORD_DEFAULT);
+    // $hashed_password = password_hash($data['password'], PASSWORD_DEFAULT);
+
+    // 直接用明碼
+    $plain_password = $data['password'];
+
 
     // 執行新增
     $sql_insert = "INSERT INTO users (user_id, fullname, password, email, phone_number, household_no, role_type, is_active, created_at)
-                        VALUES (?, ?, ?, ?, ?, ?, 1, 1, NOW())";
+                        VALUES (?, ?, ?, ?, ?, ?, 1, 0, NOW())";
     $stmt_insert = $mysqli->prepare($sql_insert);
     if ($stmt_insert === false) throw new Exception("資料庫準備失敗 (新增)", 500);
     
     $stmt_insert->bind_param('sssssi', 
-        $data['user_id'], $data['fullname'], $hashed_password, 
-        $data['email'], $data['phone_number'], $household_no
+        $data['user_id'], 
+        $data['fullname'], 
+        // $hashed_password, 
+        $plain_password,
+        $data['email'], 
+        $data['phone_number'], 
+        $household_no
     );
 
     if (!$stmt_insert->execute()) {
