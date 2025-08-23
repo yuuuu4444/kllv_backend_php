@@ -23,7 +23,7 @@
   $requiredFields = [
     'address',
     'status'
-];
+  ];
   foreach ($requiredFields as $field) {
       if (!isset($input[$field])) {
           http_response_code(400);
@@ -32,6 +32,7 @@
       }
   }
 
+
   // 準備 SQL 語句
   $sql = "INSERT INTO kllv_db.users_households (address, status)
           VALUES (?, ?)";
@@ -39,7 +40,7 @@
   // 預備 SQL 語句，綁定參數
   $stmt = $mysqli->prepare($sql);
   $stmt->bind_param(
-      "si",  // 3個參數：s=string, i=integer
+      "si",  // 參數：s=string, i=integer
       $input['address'],
       $input['status']
   );
@@ -51,7 +52,8 @@
         "message" => "新增成功",
         "data" => [
             "address"      => $input['address'],
-            "status"     => $input['status']
+            "status"       => $input['status'],
+            "household_no" => $mysqli->insert_id // 新增這行
         ]
     ], JSON_UNESCAPED_UNICODE);
   } else {
