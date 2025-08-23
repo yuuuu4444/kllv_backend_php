@@ -2,17 +2,20 @@
 error_reporting(E_ALL);
 ini_set("display_errors",1);
 
+require_once __DIR__ . '/../../common/env_init.php';
+
 // Session 安全性設定
 ini_set('session.cookie_httponly', 1);
 ini_set('session.use_only_cookies', 1);
-ini_set('session.cookie_secure', 1);
+ini_set('session.cookie_secure', 0); // 本地測試改為 0
+
 session_set_cookie_params([
     'samesite' => 'Strict'
 ]);
 
-session_start();
-
-require_once __DIR__ . '/../../common/env_init.php';
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
@@ -20,7 +23,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-// 取得POST資料
 $data = json_decode(file_get_contents("php://input"), true);
 $user_id = trim($data['user_id'] ?? '');
 $password = $data['password'] ?? '';
@@ -31,35 +33,28 @@ if (!$user_id || !$password) {
     exit;
 }
 
-// 查詢用戶
-$sql = "SELECT password, is_active, is_deleted FROM users WHERE user_id = ?";
+$sql = "SELECT password, is_active FROM users WHERE user_id = ?";
 $stmt = $mysqli->prepare($sql);
 $stmt->bind_param('s', $user_id);
 $stmt->execute();
-$stmt->bind_result($db_password, $is_active, $is_deleted);
+$stmt->bind_result($db_password, $is_active);
 
 if ($stmt->fetch()) {
-    if ($is_deleted) {
-        http_response_code(403);
-        echo json_encode(['status'=>'error','message'=>'帳號已停用'], JSON_UNESCAPED_UNICODE);
-        exit;
-    }
-    if (!password_verify($password, $db_password)) {
-        http_response_code(401);
-        echo json_encode(['status'=>'error','message'=>'帳號或密碼錯誤'], JSON_UNESCAPED_UNICODE);
-        exit;
-    }
     if (!$is_active) {
         http_response_code(403);
         echo json_encode(['status'=>'error','message'=>'帳號尚未啟用'], JSON_UNESCAPED_UNICODE);
         exit;
     }
-    
-    // 啟動 session
-    session_start();
+
+    if ($password !== $db_password) {
+        http_response_code(401);
+        echo json_encode(['status'=>'error','message'=>'帳號或密碼錯誤'], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
     $_SESSION['user_id'] = $user_id;
     $_SESSION['logged_in'] = true;
-    
+
     echo json_encode([
         'status' => 'success',
         'message' => '登入成功',
@@ -73,4 +68,6 @@ if ($stmt->fetch()) {
     http_response_code(401);
     echo json_encode(['status'=>'error','message'=>'帳號或密碼錯誤'], JSON_UNESCAPED_UNICODE);
 }
+
+$stmt->close();
 ?>
