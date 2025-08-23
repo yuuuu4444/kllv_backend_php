@@ -1,6 +1,12 @@
 <?php
     require_once __DIR__ . '/../../common/env_init.php';
 
+    /* 開 session（讓 PHP 讀到登入者） */
+    // ini_set('session.cookie_httponly', 1);
+    // ini_set('session.use_only_cookies', 1);
+    // session_set_cookie_params(['samesite' => 'Strict']);
+    // if (session_status() === PHP_SESSION_NONE) session_start();
+
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         http_response_code(405);
         echo json_encode(['status'=>'error','message'=>'Only POST allowed']);
@@ -21,6 +27,7 @@
     $post_no = isset($input['post_no']) ? intval($input['post_no']) : 0;
     $category_no = isset($input['category_no']) ? intval($input['category_no']) : 0;
     $reporter_id = isset($input['reporter_id']) ? trim($input['reporter_id']) : '';
+    // $reporter_id = $_SESSION['user_id'] ?? '';
 
     if (!$post_no || !$category_no || $reporter_id === '') {
         http_response_code(400);
@@ -29,6 +36,7 @@
     }
 
     try {
+        $mysqli->begin_transaction();
 
         // 檢查貼文是否存在
         $stmt = $mysqli->prepare("SELECT 1 FROM community_posts WHERE post_no=? LIMIT 1");
@@ -76,6 +84,8 @@
         $stmt->execute();
         $report_no = $mysqli->insert_id;
         $stmt->close();
+
+        $mysqli->commit();
 
         echo json_encode([
             'status'=>'success',
