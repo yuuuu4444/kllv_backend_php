@@ -1,4 +1,4 @@
-<?php
+<?php 
 	error_reporting(E_ALL);
 	ini_set("display_errors",1);
 
@@ -33,42 +33,16 @@
 			exit;
 	}
 
-	$sql = "SELECT
-					user_id,
-					fullname,
-					nickname,
-					password,
-					profile_image,
-					phone_number,
-					email,
-					id_number,
-					birth_date,
-					gender,
-					household_no,
-					role_type,
-					is_active
-					FROM users
+	$sql = "SELECT user_id, password, is_active
+					FROM kllv_db.users
 					WHERE user_id = ?";
 	$stmt = $mysqli->prepare($sql);
 	$stmt->bind_param('s', $user_id);
 	$stmt->execute();
-	$stmt->bind_result(
-			$db_user_id,
-			$db_fullname,
-			$db_nickname,
-			$db_password,
-			$db_profile_image,
-			$db_phone_number,
-			$db_email,
-			$db_id_number,
-			$db_birth_date,
-			$db_gender,
-			$db_household_no,
-			$db_role_type,
-			$db_is_active
-	);
+	$stmt->bind_result($db_user_id, $db_password, $db_is_active);
 
 	if ($stmt->fetch()) {
+
 			if (!$db_is_active) {
 					http_response_code(403);
 					echo json_encode(['status'=>'error','message'=>'帳號尚未啟用'], JSON_UNESCAPED_UNICODE);
@@ -81,28 +55,14 @@
 					exit;
 			}
 
-			$_SESSION['user_id'] = $user_id;
+			$_SESSION['user_id'] = $db_user_id;
 			$_SESSION['logged_in'] = true;
 
 			echo json_encode([
 					'status' => 'success',
-					'message' => '登入成功',
-					'data' => [
-							'user' => [
-									'user_id'       => $db_user_id,
-									'fullname'      => $db_fullname,
-									'nickname'      => $db_nickname,
-									'profile_image' => $db_profile_image,
-									'phone_number'  => $db_phone_number,
-									'email'         => $db_email,
-									'id_number'     => $db_id_number,
-									'birth_date'    => $db_birth_date,
-									'gender'        => $db_gender,
-									'household_no'  => $db_household_no,
-									'role_type'     => $db_role_type
-							]
-					]
+					'message' => '登入成功'
 			], JSON_UNESCAPED_UNICODE);
+
 	} else {
 			http_response_code(401);
 			echo json_encode(['status'=>'error','message'=>'帳號或密碼錯誤'], JSON_UNESCAPED_UNICODE);
