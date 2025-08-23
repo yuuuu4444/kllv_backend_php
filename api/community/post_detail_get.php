@@ -10,17 +10,19 @@
         exit;
     }
 
-    $sql = "SELECT p.*, c.category_name
+    $sql = "SELECT p.*, c.category_name, u.fullname AS author_name
             FROM community_posts AS p
             JOIN community_posts_categories AS c
                 ON p.category_no = c.category_no
+            JOIN users AS u
+                ON u.user_id = p.author_id
             WHERE p.post_no = ? AND p.is_deleted = 0
             LIMIT 1";
 
     $stmt = $mysqli->prepare($sql);
     $stmt->bind_param("i", $post_no);
     $stmt->execute();
-    $stmt->bind_result($post_no, $title, $category_no, $image, $content, $author_id, $is_deleted, $posted_at, $updated_at, $category_name);
+    $stmt->bind_result($post_no, $title, $category_no, $image, $content, $author_id, $is_deleted, $posted_at, $updated_at, $category_name, $author_name);
 
     if ($stmt->fetch()) {
         $stmt->close();
@@ -46,6 +48,7 @@
             'image' => $image,
             'content' => $content,
             'author_id' => $author_id,
+            'author_name' => $author_name,
             'is_deleted' => $is_deleted,
             'posted_at' => $posted_at,
             'updated_at' => $updated_at,
