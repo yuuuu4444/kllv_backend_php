@@ -1,6 +1,12 @@
 <?php
     require_once __DIR__ . '/../../common/env_init.php';
 
+    /* 新增：啟用 session，讓後端能讀到登入者 */
+    // ini_set('session.cookie_httponly', 1);
+    // ini_set('session.use_only_cookies', 1);
+    // session_set_cookie_params(['samesite' => 'Strict']);
+    // if (session_status() === PHP_SESSION_NONE) session_start();
+
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         http_response_code(405);
         echo json_encode(['status'=>'error','message'=>'Only POST allowed']);
@@ -22,6 +28,7 @@
     $category_no = isset($input['category_no']) ? intval($input['category_no']) : 0;
     $content = isset($input['content']) ? trim($input['content']) : '';
     $author_id = isset($input['author_id']) ? trim($input['author_id']) : '';
+    // $author_id = $_SESSION['user_id'] ?? '';
     $defaultBanner = '/uploads/community/post_default/community_banner.png';
     $image = isset($input['image']) ? trim($input['image']) : $defaultBanner;
 
