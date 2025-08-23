@@ -1,10 +1,11 @@
 <?php
     require_once __DIR__ . '/../../common/env_init.php';
 
-    $sql = "SELECT p.*, c.category_name
+    $sql = "SELECT p.*, c.category_name, u.fullname
             FROM community_posts AS p
             JOIN community_posts_categories AS c
                 ON p.category_no = c.category_no
+            JOIN users AS u
             ORDER BY post_no DESC";
     
     $result = $mysqli->query($sql);
