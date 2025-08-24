@@ -2,10 +2,10 @@
     require_once __DIR__ . '/../../common/env_init.php';
 
     /* 開 session（讓 PHP 讀到登入者） */
-    // ini_set('session.cookie_httponly', 1);
-    // ini_set('session.use_only_cookies', 1);
-    // session_set_cookie_params(['samesite' => 'Strict']);
-    // if (session_status() === PHP_SESSION_NONE) session_start();
+    ini_set('session.cookie_httponly', 1);
+    ini_set('session.use_only_cookies', 1);
+    session_set_cookie_params(['samesite' => 'Strict']);
+    if (session_status() === PHP_SESSION_NONE) session_start();
 
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         http_response_code(405);
@@ -26,8 +26,8 @@
 
     $post_no = isset($input['post_no']) ? intval($input['post_no']) : 0;
     $category_no = isset($input['category_no']) ? intval($input['category_no']) : 0;
-    $reporter_id = isset($input['reporter_id']) ? trim($input['reporter_id']) : '';
-    // $reporter_id = $_SESSION['user_id'] ?? '';
+    // $reporter_id = isset($input['reporter_id']) ? trim($input['reporter_id']) : '';
+    $reporter_id = $_SESSION['user_id'] ?? '';
 
     if (!$post_no || !$category_no || $reporter_id === '') {
         http_response_code(400);
