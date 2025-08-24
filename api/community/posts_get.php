@@ -5,7 +5,9 @@
             FROM community_posts AS p
             JOIN community_posts_categories AS c
                 ON p.category_no = c.category_no
-            JOIN users AS u
+            LEFT JOIN users AS u
+                ON p.author_id = u.user_id
+            WHERE p.is_deleted = 0
             ORDER BY post_no DESC";
     
     $result = $mysqli->query($sql);
