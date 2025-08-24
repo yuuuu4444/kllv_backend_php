@@ -16,7 +16,7 @@
                 ON p.category_no = c.category_no
             JOIN users AS u
                 ON u.user_id = p.author_id
-            WHERE p.post_no = ? AND p.is_deleted = 0
+            WHERE p.post_no = ?
             LIMIT 1";
 
     $stmt = $mysqli->prepare($sql);
