@@ -1,6 +1,4 @@
-CREATE DATABASE  IF NOT EXISTS `kllv_db` /*!40100 DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci */;
-USE `kllv_db`;
--- MySQL dump 10.13  Distrib 8.0.43, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.42, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: kllv_db
 -- ------------------------------------------------------
@@ -63,7 +61,7 @@ CREATE TABLE `community_comments` (
   KEY `user_id_idx` (`author_id`),
   CONSTRAINT `fk_community_comments_author_id` FOREIGN KEY (`author_id`) REFERENCES `users` (`user_id`),
   CONSTRAINT `fk_community_comments_post_no` FOREIGN KEY (`post_no`) REFERENCES `community_posts` (`post_no`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=303 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -72,6 +70,7 @@ CREATE TABLE `community_comments` (
 
 LOCK TABLES `community_comments` WRITE;
 /*!40000 ALTER TABLE `community_comments` DISABLE KEYS */;
+INSERT INTO `community_comments` VALUES (301,101,'【測試】這是我對正常貼文的回覆','user_account_001',0,'2025-08-23 09:13:03'),(302,102,'【測試】這是我對被檢舉貼文的回覆','user_account_001',0,'2025-08-23 09:13:03');
 /*!40000 ALTER TABLE `community_comments` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -130,7 +129,7 @@ CREATE TABLE `community_posts` (
   KEY `category_id_idx` (`category_no`),
   CONSTRAINT `fk_community_posts_author_id` FOREIGN KEY (`author_id`) REFERENCES `users` (`user_id`),
   CONSTRAINT `fk_community_posts_category_no` FOREIGN KEY (`category_no`) REFERENCES `community_posts_categories` (`category_no`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=104 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -139,6 +138,7 @@ CREATE TABLE `community_posts` (
 
 LOCK TABLES `community_posts` WRITE;
 /*!40000 ALTER TABLE `community_posts` DISABLE KEYS */;
+INSERT INTO `community_posts` VALUES (101,'【測試】這是一篇我發布的正常貼文',1,'/uploads/community/post_default/community_banner.png','這是貼文的內容...','user_account_001',0,'2025-08-23 09:13:03',NULL),(102,'【測試】這是一篇會被檢舉的貼文',2,'/uploads/community/post_default/community_banner.png','這篇貼文的內容違反了規定...','user_account_001',0,'2025-08-23 09:13:03',NULL);
 /*!40000 ALTER TABLE `community_posts` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -213,7 +213,7 @@ CREATE TABLE `community_posts_reports` (
   CONSTRAINT `fk_community_posts_reports_category_no` FOREIGN KEY (`category_no`) REFERENCES `community_posts_reports_categories` (`category_no`),
   CONSTRAINT `fk_community_posts_reports_post_no` FOREIGN KEY (`post_no`) REFERENCES `community_posts` (`post_no`),
   CONSTRAINT `fk_community_posts_reports_reporter_id` FOREIGN KEY (`reporter_id`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=202 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -222,6 +222,7 @@ CREATE TABLE `community_posts_reports` (
 
 LOCK TABLES `community_posts_reports` WRITE;
 /*!40000 ALTER TABLE `community_posts_reports` DISABLE KEYS */;
+INSERT INTO `community_posts_reports` VALUES (201,102,1,'user_account_002','2025-08-23 09:13:03',0);
 /*!40000 ALTER TABLE `community_posts_reports` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -283,7 +284,7 @@ CREATE TABLE `events` (
 
 LOCK TABLES `events` WRITE;
 /*!40000 ALTER TABLE `events` DISABLE KEYS */;
-INSERT INTO `events` VALUES (1,'梨山林輕健行','桃園市中壢區復興路46號9樓',2,'https://i.ibb.co/CstY0s1x/events-01-mt.png','<p>為了讓大家走出戶外，感受大自然的魅力，我們特別規劃了「梨山林輕健行」的活動，帶領各位走進梨山的迷人山林，享受清新空氣與壯麗景色。這條路線適合各年齡層的參加者，無論是初學者還是有健行經驗的朋友，都能輕鬆參與，感受步行中的寧靜與放鬆。</p><p>活動將在專業領隊的帶領下，穿越風景如畫的林間小徑，途中將設有數個休息點，並介紹當地的自然景觀與生態知識。參加者除了能提升健康體能，還能與社區居民一起享受親近大自然的樂趣，建立彼此間的聯繫與友誼。</p><p>我們鼓勵大家穿著舒適的運動鞋，攜帶水壺、輕便餐點以及防曬用品，一起來放鬆心情，度過愉快的一天。快來報名參加，一同踏上這段美麗的梨山林輕健行吧！</p>',400,NULL,200,'2025-10-01 00:00:00','2025-10-02 00:00:00','2025-09-25','2025-08-16',0),(2,'梨花秘境之旅','梨花谷觀光果園',1,'https://i.ibb.co/rGbhhh97/events-02-flower.png','<p>春天來臨，梨花盛開，讓我們一起走進「梨花秘境之旅」，探索隱藏在梨山深處的美麗景點。這次活動將帶領大家走訪梨花樹海，漫遊在白色花海中，感受清新怡人的春日氣息。無論是喜愛攝影、熱愛大自然的朋友，或是單純想放鬆心情的參與者，都能在這條精心規劃的路線中找到樂趣。\n  在專業導遊的帶領下，我們將沿途介紹梨花的品種與生長環境，並深入了解當地的自然生態。活動設有輕鬆步道，適合各年齡層的朋友參加，還能在途中享受休息站提供的小食與熱茶，與其他社區居民共同度過愉快時光。\n帶著親友一起，穿上舒適的運動鞋，攜帶相機捕捉梨花的美麗，來一場與大自然親密接觸的旅行吧！快來報名參加，感受春天的美好。</p>',500,NULL,100,'2025-09-15 09:00:00','2025-09-15 16:00:00','2025-09-01','2025-08-21',1),(3,'瑜珈派對','里民活動中心',2,'https://i.ibb.co/d0hLJ3nD/events-03-yoga.png','<p>快來加入我們的「瑜珈派對」，讓身心靈在輕鬆愉快的氛圍中獲得全方位的放鬆與舒展！這場活動特別規劃為一個輕鬆、有趣又具挑戰的瑜珈體驗，無論你是瑜珈新手或是有一定基礎的愛好者，都能在專業指導老師的帶領下，感受瑜珈動作帶來的舒緩效果。</p><p>活動當天，我們將透過一系列的動作練習，搭配輕柔的音樂與放鬆技巧，幫助參加者釋放壓力，增強身體柔韌性，同時提高專注力。瑜珈的每一個呼吸與動作，不僅能提升身體健康，還能在活動中建立起與其他社區朋友的連結與互動。</p><p>來一場集體的瑜珈派對吧！穿上輕便舒適的運動服，帶上瑜珈墊與愉快的心情，讓我們一起在這場健康派對中，釋放壓力、強健體魄，並開心交流。</p>',200,NULL,60,'2025-09-05 10:00:00','2025-09-05 15:00:00','2025-08-15','2025-08-22',1),(4,'端午包粽樂','里民活動中心',3,'https://i.ibb.co/PGTtdZvy/events-04-dumpling.png','<p>端午節將至，讓我們一起來參加「端午包粽樂」活動，體驗這個充滿傳統味道的節日！本次活動將帶領大家親手包粽子，學習傳統粽子包製技巧，並與社區居民共同分享這份節日的美好。</p><p>在專業指導老師的帶領下，您將學習如何選擇優質的糯米、餡料及粽葉，並了解不同種類的粽子製作方法。不僅如此，我們還將為大家準備豐富的活動內容，讓每位參加者都能體驗到親手包粽的樂趣，並品嚐自己製作的美味粽子。</p><p>這是一個適合全家大小參加的活動，不論您是粽子高手還是第一次動手，都能在輕鬆的氛圍中學習和交流，感受傳統文化的魅力。快來和我們一起過一個溫馨又有趣的端午節吧！穿上舒適的服裝，帶著歡笑和好心情，一同享受包粽的樂趣！</p>',200,NULL,60,'2025-09-05 09:00:00','2025-09-05 12:00:00','2025-08-15','2025-08-22',1),(5,'Emerald畫展','里民藝文中心展覽廳心',3,'https://i.ibb.co/Gv4KWCps/events-05-paint.png','<p>誠摯邀請您來參加「Emerald畫展」，一起沉浸在色彩與創意的藝術世界中！這場畫展將展示一系列充滿活力的作品，以「Emerald」為主題，呈現出自然、和諧與美麗的視覺體驗。每一幅作品都蘊含著深厚的情感與藝術家獨特的視角，展現了從大自然中汲取靈感的無限創造力。</p><p>本次畫展適合所有藝術愛好者與家庭參觀，無論您是對藝術有濃厚興趣，還是單純想來感受藝術氛圍的朋友，都能在這裡找到屬於自己的藝術共鳴。我們還安排了藝術家講座與現場互動，您將有機會近距離了解每幅作品背後的創作故事。</p><p>快來一起感受色彩交織的魅力，與其他社區朋友共享這份視覺與心靈的盛宴！我們期待您的蒞臨，一同探索「Emerald畫展」中的無限可能。</p>',0,NULL,200,'2025-09-05 09:00:00','2025-09-05 18:00:00','2025-08-15','2025-08-23',1),(6,'空瀧馬拉松','活動中心前廣場',2,'https://i.ibb.co/tP1rqgwW/events-06-run.png','<p>第一屆空瀧馬拉松始於1980年，以「讓我們像夥伴一樣一起奔跑」為口號，今年是第41屆。</p><p>本次活動的目的並非競賽，而是讓所有參賽者享受跑步的樂趣，在壯麗的山景和清新的空氣中，挑戰自我，迎接健康的生活！這場馬拉松活動將帶您穿越空瀧的美麗景點，沿途經過郁郁蔥蔥的森林、清澈的溪流和壯觀的山脈，讓您在跑步的同時，沉浸在大自然的美景中，感受運動帶來的無窮樂趣。</p><p>無論您是資深馬拉松選手，還是初次挑戰的跑者，這場活動都將是您難忘的體驗。活動當天，除了賽道挑戰，我們還準備了豐富的獎勳與活動，讓大家在競賽之餘，感受社區的凝聚力與友善氛圍。</p><p>快來報名參加「空瀧馬拉松」，與親友一起在清新空氣中奔跑，挑戰極限，迎接屬於你的完賽時刻！</p>',600,NULL,200,'2025-09-05 06:00:00','2025-09-05 13:00:00','2025-08-15','2025-08-23',1);
+INSERT INTO `events` VALUES (1,'梨山林輕健行','桃園市中壢區復興路46號9樓',2,'https://i.ibb.co/CstY0s1x/events-01-mt.png','<p>為了讓大家走出戶外，感受大自然的魅力，我們特別規劃了「梨山林輕健行」的活動，帶領各位走進梨山的迷人山林，享受清新空氣與壯麗景色。這條路線適合各年齡層的參加者，無論是初學者還是有健行經驗的朋友，都能輕鬆參與，感受步行中的寧靜與放鬆。</p><p>活動將在專業領隊的帶領下，穿越風景如畫的林間小徑，途中將設有數個休息點，並介紹當地的自然景觀與生態知識。參加者除了能提升健康體能，還能與社區居民一起享受親近大自然的樂趣，建立彼此間的聯繫與友誼。</p><p>我們鼓勵大家穿著舒適的運動鞋，攜帶水壺、輕便餐點以及防曬用品，一起來放鬆心情，度過愉快的一天。快來報名參加，一同踏上這段美麗的梨山林輕健行吧！</p>',400,NULL,200,'2025-10-01 00:00:00','2025-10-02 00:00:00','2025-09-25','2025-08-16',0),(2,'梨花秘境之旅','梨花谷觀光果園',1,'https://i.ibb.co/rGbhhh97/events-02-flower.png','<p>春天來臨，梨花盛開，讓我們一起走進「梨花秘境之旅」，探索隱藏在梨山深處的美麗景點。這次活動將帶領大家走訪梨花樹海，漫遊在白色花海中，感受清新怡人的春日氣息。無論是喜愛攝影、熱愛大自然的朋友，或是單純想放鬆心情的參與者，都能在這條精心規劃的路線中找到樂趣。\n  在專業導遊的帶領下，我們將沿途介紹梨花的品種與生長環境，並深入了解當地的自然生態。活動設有輕鬆步道，適合各年齡層的朋友參加，還能在途中享受休息站提供的小食與熱茶，與其他社區居民共同度過愉快時光。\n帶著親友一起，穿上舒適的運動鞋，攜帶相機捕捉梨花的美麗，來一場與大自然親密接觸的旅行吧！快來報名參加，感受春天的美好。</p>',500,NULL,100,'2025-09-15 09:00:00','2025-09-15 16:00:00','2025-09-01','2025-08-21',0),(3,'瑜珈派對','里民活動中心',2,'https://i.ibb.co/d0hLJ3nD/events-03-yoga.png','<p>快來加入我們的「瑜珈派對」，讓身心靈在輕鬆愉快的氛圍中獲得全方位的放鬆與舒展！這場活動特別規劃為一個輕鬆、有趣又具挑戰的瑜珈體驗，無論你是瑜珈新手或是有一定基礎的愛好者，都能在專業指導老師的帶領下，感受瑜珈動作帶來的舒緩效果。</p><p>活動當天，我們將透過一系列的動作練習，搭配輕柔的音樂與放鬆技巧，幫助參加者釋放壓力，增強身體柔韌性，同時提高專注力。瑜珈的每一個呼吸與動作，不僅能提升身體健康，還能在活動中建立起與其他社區朋友的連結與互動。</p><p>來一場集體的瑜珈派對吧！穿上輕便舒適的運動服，帶上瑜珈墊與愉快的心情，讓我們一起在這場健康派對中，釋放壓力、強健體魄，並開心交流。</p>',200,NULL,60,'2025-09-05 10:00:00','2025-09-05 15:00:00','2025-08-15','2025-08-22',0),(4,'端午包粽樂','里民活動中心',3,'https://i.ibb.co/PGTtdZvy/events-04-dumpling.png','<p>端午節將至，讓我們一起來參加「端午包粽樂」活動，體驗這個充滿傳統味道的節日！本次活動將帶領大家親手包粽子，學習傳統粽子包製技巧，並與社區居民共同分享這份節日的美好。</p><p>在專業指導老師的帶領下，您將學習如何選擇優質的糯米、餡料及粽葉，並了解不同種類的粽子製作方法。不僅如此，我們還將為大家準備豐富的活動內容，讓每位參加者都能體驗到親手包粽的樂趣，並品嚐自己製作的美味粽子。</p><p>這是一個適合全家大小參加的活動，不論您是粽子高手還是第一次動手，都能在輕鬆的氛圍中學習和交流，感受傳統文化的魅力。快來和我們一起過一個溫馨又有趣的端午節吧！穿上舒適的服裝，帶著歡笑和好心情，一同享受包粽的樂趣！</p>',200,NULL,60,'2025-09-05 09:00:00','2025-09-05 12:00:00','2025-08-15','2025-08-22',0),(5,'Emerald畫展','里民藝文中心展覽廳心',3,'https://i.ibb.co/Gv4KWCps/events-05-paint.png','<p>誠摯邀請您來參加「Emerald畫展」，一起沉浸在色彩與創意的藝術世界中！這場畫展將展示一系列充滿活力的作品，以「Emerald」為主題，呈現出自然、和諧與美麗的視覺體驗。每一幅作品都蘊含著深厚的情感與藝術家獨特的視角，展現了從大自然中汲取靈感的無限創造力。</p><p>本次畫展適合所有藝術愛好者與家庭參觀，無論您是對藝術有濃厚興趣，還是單純想來感受藝術氛圍的朋友，都能在這裡找到屬於自己的藝術共鳴。我們還安排了藝術家講座與現場互動，您將有機會近距離了解每幅作品背後的創作故事。</p><p>快來一起感受色彩交織的魅力，與其他社區朋友共享這份視覺與心靈的盛宴！我們期待您的蒞臨，一同探索「Emerald畫展」中的無限可能。</p>',0,NULL,200,'2025-09-05 09:00:00','2025-09-05 18:00:00','2025-08-15','2025-08-23',0),(6,'空瀧馬拉松','活動中心前廣場',2,'https://i.ibb.co/tP1rqgwW/events-06-run.png','<p>第一屆空瀧馬拉松始於1980年，以「讓我們像夥伴一樣一起奔跑」為口號，今年是第41屆。</p><p>本次活動的目的並非競賽，而是讓所有參賽者享受跑步的樂趣，在壯麗的山景和清新的空氣中，挑戰自我，迎接健康的生活！這場馬拉松活動將帶您穿越空瀧的美麗景點，沿途經過郁郁蔥蔥的森林、清澈的溪流和壯觀的山脈，讓您在跑步的同時，沉浸在大自然的美景中，感受運動帶來的無窮樂趣。</p><p>無論您是資深馬拉松選手，還是初次挑戰的跑者，這場活動都將是您難忘的體驗。活動當天，除了賽道挑戰，我們還準備了豐富的獎勳與活動，讓大家在競賽之餘，感受社區的凝聚力與友善氛圍。</p><p>快來報名參加「空瀧馬拉松」，與親友一起在清新空氣中奔跑，挑戰極限，迎接屬於你的完賽時刻！</p>',600,NULL,200,'2025-09-05 06:00:00','2025-09-05 13:00:00','2025-08-15','2025-08-23',0);
 /*!40000 ALTER TABLE `events` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -510,7 +511,7 @@ CREATE TABLE `repair` (
   KEY `user_id_idx` (`reporter_id`),
   CONSTRAINT `fk_repair_category_no` FOREIGN KEY (`category_no`) REFERENCES `repair_categories` (`category_no`),
   CONSTRAINT `fk_repair_reporter_id` FOREIGN KEY (`reporter_id`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -519,6 +520,7 @@ CREATE TABLE `repair` (
 
 LOCK TABLES `repair` WRITE;
 /*!40000 ALTER TABLE `repair` DISABLE KEYS */;
+INSERT INTO `repair` VALUES (1,'【測試】里民活動中心前路口',1,'路燈從昨晚開始閃爍不停，影響交通安全。','user_account_001','2025-07-04',NULL,NULL,0),(2,'【測試】幸福公園兒童遊樂區',2,'溜滑梯有裂痕，有安全疑慮。','user_account_001','2025-05-20','已聯系廠商進行更換，預計下周一完成。','2025-05-21',2),(3,'【測試】中正路與和平路交叉口',3,'路面有一個小坑洞。','user_account_001','2025-04-15','經查此路段非本里管轄範圍，已轉報區公所處理。','2025-04-16',3);
 /*!40000 ALTER TABLE `repair` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -636,7 +638,7 @@ CREATE TABLE `users_households` (
 
 LOCK TABLES `users_households` WRITE;
 /*!40000 ALTER TABLE `users_households` DISABLE KEYS */;
-INSERT INTO `users_households` VALUES (101,'桃園市中壢區空瀧浪里快樂街1479號8樓-3','user_account_001',1);
+INSERT INTO `users_households` VALUES (101,'桃園市中壢區空瀧浪里快樂街1479號8樓-3','user_account_001',2);
 /*!40000 ALTER TABLE `users_households` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -677,4 +679,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-08-23  2:41:49
+-- Dump completed on 2025-08-23  9:44:50

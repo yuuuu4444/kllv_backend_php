@@ -1,3 +1,8 @@
 # 忽略包含敏感資訊的本地設定檔
 /common/local/config.php
 /common/server/config_g5.php
+
+# 忽略 Node.js 相關的檔案
+node_modules/
+package-lock.json
+package.json
