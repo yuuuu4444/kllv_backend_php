@@ -3,6 +3,8 @@
 
     header('Content-Type: application/json; charset=utf-8');
 
+    if (session_status() === PHP_SESSION_NONE) session_start();
+
     // 1) 先把所有 PHP 警告/notice 轉成 Exception（要在任何可能出錯之前設定）
     set_error_handler(function ($severity, $message, $file, $line) {
         // 避免被 @ 抑制的錯誤
@@ -36,13 +38,21 @@
     $title = isset($_POST['title']) ? trim($_POST['title']) : '';
     $category_no = isset($_POST['category_no']) ? intval($_POST['category_no']) : 0;
     $content = isset($_POST['content']) ? trim($_POST['content']) : '';
-    $author_id = isset($_POST['author_id']) ? trim($_POST['author_id']) : '';
+    // $author_id = isset($_POST['author_id']) ? trim($_POST['author_id']) : '';
+    $login_id = $_SESSION['user_id'] ?? '';
 
-    if (!$post_no || !$title || !$category_no || !$content || !$author_id) {
+    if (!$post_no || !$title || !$category_no || !$content) {
         echo json_encode(['status'=>'error','message'=>'參數不足']);
         exit;
     }
 
+    
+    if ($login_id === '') { // 未登入
+        http_response_code(401);
+        echo json_encode(['status'=>'error','message'=>'未登入']);
+        exit;
+    }
+    
     $defaultBanner = '/uploads/community/post_default/community_banner.png';
     $PUBLIC_BASE = '/uploads/community';
     $uploadsRoot = realpath(__DIR__ . '/../../uploads/community');
@@ -65,7 +75,9 @@
         $chk->bind_result($owner, $posted_at);
         if (!$chk->fetch()) { throw new Exception('找不到貼文'); }
         $chk->close();
-        if ($owner !== $author_id) throw new Exception('無權編輯此貼文');
+        // if ($owner !== $author_id) throw new Exception('無權編輯此貼文');
+        /* 改：以 Session 身分比對作者 */
+        if ($owner !== $login_id) throw new Exception('無權編輯此貼文');
 
         $subdir = $posted_at ? date('Y/m', strtotime($posted_at)) : date('Y/m');
         $baseDir = __DIR__ . '/../../uploads/community/' . $subdir;
@@ -79,7 +91,7 @@
                 WHERE post_no = ? AND author_id = ?";
 
         $stmt = $mysqli->prepare($sql);
-        $stmt->bind_param("sisis", $title, $category_no, $content, $post_no, $author_id);
+        $stmt->bind_param("sisis", $title, $category_no, $content, $post_no, $login_id);
         $stmt->execute();
         $stmt->close();
 
@@ -164,6 +176,17 @@
         $updB->bind_param("si", $banner, $post_no);
         $updB->execute();
         $updB->close();
+
+        /* 帶回作者名稱，方便前端直接更新畫面 */
+        
+        $author_name = '';
+        $au = $mysqli->prepare("SELECT fullname FROM users WHERE user_id = ? LIMIT 1");
+        $au->bind_param('s', $login_id);
+        $au->execute();
+        $au->bind_result($author_name);
+        $au->fetch();
+        $au->close();
+        
     
         $mysqli->commit();
     
@@ -173,6 +196,7 @@
                 'post_no'=>$post_no,
                 'image'=>$banner,
                 'images'=>$imgs,
+                // 'author_name' => $author_name,
             ]
         ], JSON_UNESCAPED_UNICODE);
         exit;
