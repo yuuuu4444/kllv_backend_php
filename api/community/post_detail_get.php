@@ -10,7 +10,7 @@
         exit;
     }
 
-    $sql = "SELECT p.*, c.category_name, u.fullname AS author_name
+    $sql = "SELECT p.*, c.category_name, u.fullname AS author_name, u.profile_image
             FROM community_posts AS p
             JOIN community_posts_categories AS c
                 ON p.category_no = c.category_no
@@ -22,7 +22,7 @@
     $stmt = $mysqli->prepare($sql);
     $stmt->bind_param("i", $post_no);
     $stmt->execute();
-    $stmt->bind_result($post_no, $title, $category_no, $image, $content, $author_id, $is_deleted, $posted_at, $updated_at, $category_name, $author_name);
+    $stmt->bind_result($post_no, $title, $category_no, $image, $content, $author_id, $is_deleted, $posted_at, $updated_at, $category_name, $author_name, $profile_image);
 
     if ($stmt->fetch()) {
         $stmt->close();
@@ -49,6 +49,7 @@
             'content' => $content,
             'author_id' => $author_id,
             'author_name' => $author_name,
+            'profile_image' => $profile_image,
             'is_deleted' => $is_deleted,
             'posted_at' => $posted_at,
             'updated_at' => $updated_at,
