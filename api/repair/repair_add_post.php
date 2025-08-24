@@ -1,12 +1,15 @@
 <?php
     require_once __DIR__ . '/../../common/env_init.php';
 
+    if (session_status() === PHP_SESSION_NONE) session_start();
+
     if ($_SERVER["REQUEST_METHOD"] == "POST"){
 
         $location    = trim($_POST['location'] ?? '');
         $category_no = filter_input(INPUT_POST, 'category_no', FILTER_VALIDATE_INT) ?: 0;
         $description = trim($_POST['description'] ?? '');
-        $reporter    = trim($_POST['reporter_id'] ?? '');
+        // $reporter    = trim($_POST['reporter_id'] ?? '');
+        $reporter    = $_SESSION['user_id'] ?? '';
         $reported_at = trim($_POST['reported_at'] ?? date('Y-m-d'));
         $status      = filter_input(INPUT_POST, 'status', FILTER_VALIDATE_INT);
     
