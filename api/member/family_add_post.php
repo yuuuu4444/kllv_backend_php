@@ -3,6 +3,28 @@ error_reporting(E_ALL);
 ini_set("display_errors", 1);
 require_once __DIR__ . '/../../common/env_init.php';
 
+//  Session 安全性設定
+ini_set('session.cookie_httponly', 1);
+ini_set('session.use_only_cookies', 1);
+// ini_set('session.cookie_secure', 1); 
+
+session_set_cookie_params(['samesite' => 'Strict']);
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// 守衛檢查：如果 Session 中沒有登入資訊，則拒絕存取
+if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true || !isset($_SESSION['user_id'])) {
+    http_response_code(401); // 401 Unauthorized (未授權)
+    // 在輸出 JSON 後立刻停止腳本，確保不會執行到後面的程式碼
+    echo json_encode(['status' => 'error', 'message' => '未登入或憑證無效'], JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
+// 從 Session 中取得當前登入者的 user_id
+$loggedInUserId = $_SESSION['user_id'];
+
+// 設定 HTTP Header
 header('Content-Type: application/json; charset=utf-8');
 if ($_SERVER["REQUEST_METHOD"] !== "POST")  {
     http_response_code(405);
@@ -10,8 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST")  {
     exit;
 }
 
-// 手動建立的假資料 (未來從 Session 或 Token 取得)
-$loggedInUserId = 'user_account_001';
+// 接收前端傳來的 JSON 資料
 $data = json_decode(file_get_contents("php://input"), true);
 
 if (empty($data['user_id']) || empty($data['fullname']) || empty($data['password']) || empty($data['email']) || empty($data['phone_number'])) { 
@@ -19,28 +40,31 @@ if (empty($data['user_id']) || empty($data['fullname']) || empty($data['password
     echo json_encode(['status'=>'error','message'=>'所有欄位皆為必填']);
     exit;
 }
-$stmt_household = null;
+
+$response = [];
+$stmt_role = null;
 $stmt_check = null;
 $stmt_insert = null;
 
 try {
-    // 取得主帳號戶號
-    $stmt_household = $mysqli->prepare("SELECT household_no FROM users WHERE user_id = ?");
-    if ($stmt_household === false) throw new Exception("資料庫準備失敗 (戶號查詢)", 500);
-    $stmt_household->bind_param('s', $loggedInUserId);
-    $stmt_household->execute();
+     // 確保只有主帳號 (role_type=0) 才能新增成員
+    $stmt_role = $mysqli->prepare("SELECT role_type, household_no FROM users WHERE user_id = ?");
 
-    $stmt_household->store_result();
+    if ($stmt_role === false) throw new Exception("資料庫準備失敗 (權限查詢)", 500);
 
-    // 判斷 num_rows
-    if ($stmt_household->num_rows === 0) {
-        throw new Exception("找不到主帳號資料", 404);
+    $stmt_role->bind_param('s', $loggedInUserId);
+    $stmt_role->execute();
+    $stmt_role->store_result();
+
+    if ($stmt_role->num_rows === 0) throw new Exception("找不到主帳號資料", 404);
+
+    $stmt_role->bind_result($role_type, $household_no);
+    $stmt_role->fetch();
+    
+    if ($role_type !== 0) {
+        throw new Exception("權限不足，只有主帳號可以新增成員", 403);
     }
-    
-    $stmt_household->bind_result($household_no);
-    $stmt_household->fetch();
-    
-    // 確認戶號有效
+
     if (empty($household_no)) {
         throw new Exception("主帳號沒有設定戶籍資料，無法新增家庭成員", 400);
     }
@@ -86,7 +110,7 @@ try {
         throw new Exception("資料庫新增失敗: " . $stmt_insert->error, 500);
     }
 
-    echo json_encode([
+    $response =[
         "status" => "success", 
         "message" => "家庭成員新增成功",
         "data" => [
@@ -95,16 +119,18 @@ try {
             "email"        => $data['email'],
             "phone_number" => $data['phone_number']
         ]
-    ]);
+    ];
 
 } catch (Exception $e) {
     http_response_code($e->getCode() ?: 500);
-    echo json_encode(["status" => "error", "message" => $e->getMessage()]);
+    $response = ["status" => "error", "message" => $e->getMessage()];
 } finally {
     // 確保所有可能建立的 statement 都會被關閉
-    if (isset($stmt_household)) $stmt_household->close();
-    if (isset($stmt_check)) $stmt_check->close();
-    if (isset($stmt_insert)) $stmt_insert->close();
+    if ($stmt_role !== null) $stmt_role->close();
+    if ($stmt_check !== null) $stmt_check->close();
+    if ($stmt_insert !== null) $stmt_insert->close();
     if (isset($mysqli)) $mysqli->close();
 }
+
+echo json_encode($response);
 ?>
