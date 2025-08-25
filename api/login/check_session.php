@@ -4,8 +4,8 @@
 
 	require_once __DIR__ . '/../../common/env_init.php';
 
-	// Session 安全性設定
-	// ini_set('session.cookie_httponly', 1);
+	Session 安全性設定
+	ini_set('session.cookie_httponly', 1);
 	ini_set('session.use_only_cookies', 1);
 	ini_set('session.cookie_secure', 1);
 

@@ -4,14 +4,14 @@
 
 	require_once __DIR__ . '/../../common/env_init.php';
 
-	// Session 安全性設定
-	// ini_set('session.cookie_httponly', 1);
-	// ini_set('session.use_only_cookies', 1);
-	// ini_set('session.cookie_secure', 1);
+	Session 安全性設定
+	ini_set('session.cookie_httponly', 1);
+	ini_set('session.use_only_cookies', 1);
+	ini_set('session.cookie_secure', 1);
 
-	// session_set_cookie_params([
-	// 		'samesite' => 'Strict'
-	// ]);
+	session_set_cookie_params([
+			'samesite' => 'Strict'
+	]);
 
 	if (session_status() === PHP_SESSION_NONE) {
 			session_start();
@@ -34,7 +34,7 @@
 	}
 
 	$sql = "SELECT user_id, password, is_active
-					FROM kllv_db.users
+					FROM users
 					WHERE user_id = ?";
 	$stmt = $mysqli->prepare($sql);
 	$stmt->bind_param('s', $user_id);
