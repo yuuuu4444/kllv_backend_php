@@ -40,7 +40,7 @@ try {
                         uh.address
                     FROM users AS u
                     LEFT JOIN users_households AS uh ON u.household_no = uh.household_no
-                    WHERE u.household_no = ? AND u.is_deleted = 0
+                    WHERE u.household_no = ? AND u.is_deleted = 0 AND u.is_active = 1
                     ORDER BY u.role_type ASC, u.created_at ASC"; // 讓主帳號(role_type=0)排在最前面
 
     $stmt_members = $mysqli->prepare($sql_members);

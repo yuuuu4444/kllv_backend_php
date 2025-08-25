@@ -85,7 +85,7 @@ try {
     
     // 執行刪除
     // $stmt_delete = $mysqli->prepare("DELETE FROM users WHERE user_id = ?");
-    $stmt_delete = $mysqli->prepare("UPDATE users SET is_deleted = 1 WHERE user_id = ?");
+    $stmt_delete = $mysqli->prepare("UPDATE users SET is_deleted = 1, is_active = 0  WHERE user_id = ?");
     $stmt_delete->bind_param('s', $memberIdToDelete);
 
     if ($stmt_delete->execute()) {
