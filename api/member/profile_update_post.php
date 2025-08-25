@@ -1,17 +1,38 @@
 <?php
 error_reporting(E_ALL);
 ini_set("display_errors", 1);
+
 require_once __DIR__ . '/../../common/env_init.php';
 
+//  Session 安全性設定
+ini_set('session.cookie_httponly', 1);
+ini_set('session.use_only_cookies', 1);
+// ini_set('session.cookie_secure', 1); 
+
+session_set_cookie_params(['samesite' => 'Strict']);
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// 守衛檢查：如果 Session 中沒有登入資訊，則拒絕存取
+if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true || !isset($_SESSION['user_id'])) {
+    http_response_code(401); // 401 Unauthorized (未授權)
+    // 在輸出 JSON 後立刻停止腳本，確保不會執行到後面的程式碼
+    echo json_encode(['status' => 'error', 'message' => '未登入或憑證無效'], JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
+// 從 Session 中取得當前登入者的 user_id
+$loggedInUserId = $_SESSION['user_id'];
+
+// 設定 HTTP Header
 header('Content-Type: application/json; charset=utf-8');
-if ($_SERVER["REQUEST_METHOD"] !== "PATCH") {
+if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     http_response_code(405);
     echo json_encode(["status" => "error", "message" => "僅支援 PATCH 方法"]);
     exit;
 }
 
-// 手動建立的假資料 (未來從 Session 或 Token 取得)
-$loggedInUserId = 'user_account_001'; 
 
 // 接收前端傳來的 JSON 資料
 $data = json_decode(file_get_contents("php://input"), true);
@@ -22,6 +43,9 @@ if (empty($data)) {
     exit;
 }
 
+$response = [];
+$stmt_update = null;
+$stmt_select = null;
 
 try {
     $sql_parts = [];
@@ -51,10 +75,20 @@ try {
     
     $stmt_update->bind_param($types, ...$params);
     if (!$stmt_update->execute()) throw new Exception("資料庫更新失敗: " . $stmt_update->error, 500);
-    $stmt_update->close();
 
 
-    $sql_select = "SELECT u.user_id, u.fullname, u.nickname, u.profile_image, u.phone_number, u.email, u.id_number, u.birth_date, u.gender, u.household_no, h.address 
+    $sql_select = "SELECT 
+                    u.user_id, 
+                    u.fullname, 
+                    u.nickname, 
+                    u.profile_image, 
+                    u.phone_number, 
+                    u.email, 
+                    u.id_number, 
+                    u.birth_date, 
+                    u.gender, u.household_no, 
+                    u.role_type, 
+                    h.address 
                     FROM users u 
                     LEFT JOIN users_households h ON u.household_no = h.household_no
                     WHERE u.user_id = ?";
@@ -65,8 +99,18 @@ try {
     
     $stmt_select->store_result();
     $stmt_select->bind_result(
-        $user_id, $fullname, $nickname, $profile_image, $phone_number, $email, 
-        $id_number, $birth_date, $gender, $household_no, $address
+        $user_id, 
+        $fullname,
+        $nickname, 
+        $profile_image, 
+        $phone_number, 
+        $email, 
+        $id_number, 
+        $birth_date, 
+        $gender, 
+        $household_no, 
+        $role_type,
+        $address
     );
     $stmt_select->fetch();
     
@@ -81,12 +125,16 @@ try {
         'birth_date' => $birth_date,
         'gender' => $gender, 
         'household_no' => $household_no, 
+        'role_type'     => $role_type,
         'address' => $address
     ];
     
-    echo json_encode(["status" => "success", "message" => "個人資料更新成功", "data" => $updatedUser]);
+    $response = ["status" => "success", "message" => "個人資料更新成功", "data" => $updatedUser];
 
-} catch (Exception $e) { /* ... */ } 
+} catch (Exception $e) {
+    http_response_code($e->getCode() ?: 500);
+    $response = ["status" => "error", "message" => $e->getMessage()];
+} 
 finally {
     // 檢查並關閉所有可能已建立的 statement 物件
     if (isset($stmt_update)) $stmt_update->close();
@@ -94,4 +142,6 @@ finally {
     // 最後關閉資料庫連線
     if (isset($mysqli)) $mysqli->close();
 }
+
+echo json_encode($response);
 ?>
