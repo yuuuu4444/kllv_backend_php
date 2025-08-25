@@ -1,8 +1,35 @@
 <?php
+// 錯誤回報
 error_reporting(E_ALL);
 ini_set("display_errors", 1);
+
+// 引入資料庫連線等共用檔案
 require_once __DIR__ . '/../../common/env_init.php';
 
+//  Session 安全性設定
+ini_set('session.cookie_httponly', 1);
+ini_set('session.use_only_cookies', 1);
+// 在 localhost 開發時，連線是 http 而非 https，部署到正式的 https 伺服器時取消注解
+// ini_set('session.cookie_secure', 1); 
+
+session_set_cookie_params(['samesite' => 'Strict']);
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// 守衛檢查：如果 Session 中沒有登入資訊，則拒絕存取
+if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true || !isset($_SESSION['user_id'])) {
+    http_response_code(401); // 401 Unauthorized (未授權)
+    // 在輸出 JSON 後立刻停止腳本，確保不會執行到後面的程式碼
+    echo json_encode(['status' => 'error', 'message' => '未登入或憑證無效'], JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
+// 從 Session 中取得當前登入者的 user_id
+$loggedInUserId = $_SESSION['user_id'];
+
+
+// 設定 HTTP Header
 header('Content-Type: application/json; charset=utf-8');
 if ($_SERVER["REQUEST_METHOD"] !== "GET") {
     http_response_code(405);
@@ -10,14 +37,23 @@ if ($_SERVER["REQUEST_METHOD"] !== "GET") {
     exit;
 }
 
-// 假設的登入者ID (未來從 Session 或 Token 取得)
-$loggedInUserId = 'user_account_001';
+$response = [];
+$stmt = null;
 
 try {
     $sql = "SELECT 
-            u.user_id, u.fullname, u.nickname, u.profile_image, 
-            u.phone_number, u.email, u.id_number, u.birth_date, 
-            u.gender, u.household_no, h.address 
+            u.user_id, 
+            u.fullname, 
+            u.nickname, 
+            u.profile_image, 
+            u.phone_number, 
+            u.email, 
+            u.id_number, 
+            u.birth_date, 
+            u.gender, 
+            u.household_no, 
+            u.role_type,
+            h.address 
         FROM users u
         LEFT JOIN users_households h ON u.household_no = h.household_no
         WHERE u.user_id = ?";
@@ -38,9 +74,18 @@ try {
     
     // 根據 SELECT 的欄位順序，建立對應的 PHP 變數並綁定
     $stmt->bind_result(
-        $user_id, $fullname, $nickname, $profile_image, 
-        $phone_number, $email, $id_number, $birth_date, 
-        $gender, $household_no, $address
+        $user_id, 
+        $fullname, 
+        $nickname, 
+        $profile_image, 
+        $phone_number, 
+        $email, 
+        $id_number, 
+        $birth_date, 
+        $gender, 
+        $household_no, 
+        $role_type,
+        $address
     );
     
     // 將綁定的變數填入值
@@ -58,16 +103,19 @@ try {
         'birth_date'    => $birth_date,
         'gender'        => $gender,
         'household_no'  => $household_no,
+        'role_type'     => $role_type,
         'address'       => $address
     ];
 
-    echo json_encode(["status" => "success", "data" => $user]);
+    $response = ["status" => "success", "data" => $user];
 
 } catch (Exception $e) {
     http_response_code($e->getCode() ?: 500);
-    echo json_encode(["status" => "error", "message" => $e->getMessage()]);
+    $response = ["status" => "error", "message" => $e->getMessage()];
 } finally {
     if (isset($stmt)) $stmt->close();
     if (isset($mysqli)) $mysqli->close();
 }
+
+echo json_encode($response);
 ?>

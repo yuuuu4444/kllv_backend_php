@@ -3,6 +3,28 @@ error_reporting(E_ALL);
 ini_set("display_errors", 1);
 require_once __DIR__ . '/../../common/env_init.php';
 
+//  Session 安全性設定
+ini_set('session.cookie_httponly', 1);
+ini_set('session.use_only_cookies', 1);
+// ini_set('session.cookie_secure', 1); 
+
+session_set_cookie_params(['samesite' => 'Strict']);
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// 守衛檢查：如果 Session 中沒有登入資訊，則拒絕存取
+if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true || !isset($_SESSION['user_id'])) {
+    http_response_code(401); // 401 Unauthorized (未授權)
+    // 在輸出 JSON 後立刻停止腳本，確保不會執行到後面的程式碼
+    echo json_encode(['status' => 'error', 'message' => '未登入或憑證無效'], JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
+// 從 Session 中取得當前登入者的 user_id
+$loggedInUserId = $_SESSION['user_id'];
+
+// 設定 HTTP Header
 header('Content-Type: application/json; charset=utf-8');
 if ($_SERVER["REQUEST_METHOD"] !== "GET")  {
     http_response_code(405);
@@ -10,12 +32,16 @@ if ($_SERVER["REQUEST_METHOD"] !== "GET")  {
     exit;
 }
 
-// 手動建立的假資料 (未來從 Session 或 Token 取得)
-$loggedInUserId = 'user_account_001';
+$response = [];
+$stmt_household = null;
+$stmt_members = null;
 
 try {
     // 取得登入者的戶號
     $stmt_household = $mysqli->prepare("SELECT household_no FROM users WHERE user_id = ?");
+    
+    if ($stmt_household === false) throw new Exception("資料庫準備失敗 (戶號查詢)", 500);
+
     $stmt_household->bind_param('s', $loggedInUserId);
     $stmt_household->execute();
     $stmt_household->store_result();
@@ -53,14 +79,16 @@ try {
             'phone_number' => $phone_number
         ];
     }
-    echo json_encode(["status" => "success", "data" => $familyMembers]);
+    $response = ["status" => "success", "data" => $familyMembers];
 
 } catch (Exception $e) {
     http_response_code($e->getCode() ?: 500);
-    echo json_encode(["status" => "error", "message" => $e->getMessage()]);
+    $response = ["status" => "error", "message" => $e->getMessage()];
 } finally {
     if (isset($stmt_household)) $stmt_household->close();
     if (isset($stmt_members)) $stmt_members->close();
     if (isset($mysqli)) $mysqli->close();
 }
+
+echo json_encode($response);
 ?>
