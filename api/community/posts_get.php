@@ -1,7 +1,7 @@
 <?php
     require_once __DIR__ . '/../../common/env_init.php';
 
-    $sql = "SELECT p.*, c.category_name, u.fullname
+    $sql = "SELECT p.*, c.category_name, u.fullname, u.profile_image
             FROM community_posts AS p
             JOIN community_posts_categories AS c
                 ON p.category_no = c.category_no
