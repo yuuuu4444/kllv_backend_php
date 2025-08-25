@@ -32,7 +32,7 @@
             id_number,
             phone_number,
             email
-          FROM kllv_db.users
+          FROM users
           WHERE household_no = ?
           AND is_active = 1
           ORDER BY role_type";

@@ -40,14 +40,14 @@
 	}
 
 	// 更新 users_households.status
-	$sql1 = "UPDATE kllv_db.users_households SET status = ? WHERE household_no = ?";
+	$sql1 = "UPDATE users_households SET status = ? WHERE household_no = ?";
 	$stmt1 = $mysqli->prepare($sql1);
 	$stmt1->bind_param("ii", $status, $household_no);
 	$ok1 = $stmt1->execute();
 	$stmt1->close();
 
 	// 更新 users.is_active
-	$sql2 = "UPDATE kllv_db.users SET is_active = ? WHERE household_no = ?";
+	$sql2 = "UPDATE users SET is_active = ? WHERE household_no = ?";
 	$stmt2 = $mysqli->prepare($sql2);
 	$stmt2->bind_param("ii", $is_active, $household_no);
 	$ok2 = $stmt2->execute();

@@ -30,7 +30,7 @@
   }
 
   // 準備 SQL 語句
-  $sql = "INSERT INTO kllv_db.news 
+  $sql = "INSERT INTO news 
           (title, category_no, image, content, published_at, status) 
           VALUES (?, ?, ?, ?, ?, ?)";
 

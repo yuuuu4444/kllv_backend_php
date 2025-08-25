@@ -17,7 +17,7 @@
   }
 
   // 準備 SQL 語句
-  $sql = "SELECT * FROM kllv_db.news_categories
+  $sql = "SELECT * FROM news_categories
           ORDER BY category_no";
   // 預備 SQL 語句，執行，綁定查詢結果
   $stmt = $mysqli->prepare($sql);

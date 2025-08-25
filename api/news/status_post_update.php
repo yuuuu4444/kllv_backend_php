@@ -30,7 +30,7 @@
   }
 
   // 準備 SQL 語句，只更新 status
-  $sql = "UPDATE kllv_db.news
+  $sql = "UPDATE news
           SET status = ?
           WHERE news_no = ?";
 

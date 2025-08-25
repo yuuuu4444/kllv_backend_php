@@ -26,8 +26,8 @@
             n.content AS content,
             n.published_at AS published_at,
             n.status AS status
-          FROM kllv_db.news n
-          JOIN kllv_db.news_categories c ON n.category_no = c.category_no
+          FROM news n
+          JOIN news_categories c ON n.category_no = c.category_no
           ORDER BY published_at DESC";
   // 預備 SQL 語句，執行，綁定查詢結果
   $stmt = $mysqli->prepare($sql);

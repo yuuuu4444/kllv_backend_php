@@ -30,7 +30,7 @@ ini_set("display_errors",1);
   }
 
   // 準備 SQL 語句
-  $sql = "UPDATE kllv_db.news 
+  $sql = "UPDATE news 
           SET title = ?, category_no = ?, image = ?, content = ?, published_at = ?, status = ? 
           WHERE news_no = ?";
 

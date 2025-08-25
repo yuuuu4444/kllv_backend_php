@@ -25,8 +25,8 @@
             u.phone_number AS phone_number,
             u.email AS email,
             h.status AS status
-          FROM kllv_db.users_households h
-          JOIN kllv_db.users u ON h.creator_id = u.user_id
+          FROM users_households h
+          JOIN users u ON h.creator_id = u.user_id
           ORDER BY household_no";
   // 預備 SQL 語句，執行，綁定查詢結果
   $stmt = $mysqli->prepare($sql);

@@ -34,7 +34,7 @@
 
 
   // 準備 SQL 語句
-  $sql = "INSERT INTO kllv_db.users_households (address, status)
+  $sql = "INSERT INTO users_households (address, status)
           VALUES (?, ?)";
 
   // 預備 SQL 語句，綁定參數

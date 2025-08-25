@@ -30,7 +30,7 @@
 								household_no,
 								role_type,
 								is_active
-							FROM kllv_db.users
+							FROM users
 							WHERE user_id = ?";
 
 			$stmt = $mysqli->prepare($sql);
