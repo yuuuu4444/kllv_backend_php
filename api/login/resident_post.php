@@ -72,8 +72,8 @@ if ($role_type != 1) {
 }
 $user_stmt->close();
 
-// 執行 UPDATE 將資料寫入子帳號
-$update_stmt = $mysqli->prepare("UPDATE users SET nickname = ?, id_number = ?, birth_date = ?, gender = ? WHERE user_id = ?");
+// 執行 UPDATE 將資料寫入子帳號，並更新 is_active 為 1
+$update_stmt = $mysqli->prepare("UPDATE users SET nickname = ?, id_number = ?, birth_date = ?, gender = ?, is_active = 1 WHERE user_id = ?");
 $update_stmt->bind_param('sssss', $nickname, $id_number, $birth_date, $gender, $user_id);
 
 if (!$update_stmt->execute()) {

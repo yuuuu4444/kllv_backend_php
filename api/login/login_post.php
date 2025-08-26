@@ -43,15 +43,17 @@
 
 	if ($stmt->fetch()) {
 
-			if (!$db_is_active) {
-					http_response_code(403);
-					echo json_encode(['status'=>'error','message'=>'帳號尚未啟用'], JSON_UNESCAPED_UNICODE);
-					exit;
-			}
-
+			// 先驗證密碼
 			if ($password !== $db_password) {
 					http_response_code(401);
 					echo json_encode(['status'=>'error','message'=>'帳號或密碼錯誤'], JSON_UNESCAPED_UNICODE);
+					exit;
+			}
+
+			// 再檢查是否啟用
+			if (!$db_is_active) {
+					http_response_code(403);
+					echo json_encode(['status'=>'error','message'=>'帳號尚未啟用'], JSON_UNESCAPED_UNICODE);
 					exit;
 			}
 
