@@ -14,6 +14,7 @@
                 ec.category_name
             FROM events AS e
             LEFT JOIN events_categories AS ec ON e.category_no = ec.category_no
+            WHERE e.status = 2 -- AND e.is_deleted = 0 -- 假設有is_deleted欄位
             ORDER BY e.start_date DESC";
 
     $result = $mysqli->query($sql);
