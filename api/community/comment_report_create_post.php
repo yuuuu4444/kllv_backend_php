@@ -1,6 +1,8 @@
 <?php
     require_once __DIR__ . '/../../common/env_init.php';
 
+    header('Content-Type: application/json; charset=utf-8');
+
     /* 開 session（讓 PHP 讀到登入者） */
     ini_set('session.cookie_httponly', 1);
     ini_set('session.use_only_cookies', 1);
@@ -74,7 +76,7 @@
         $stmt->bind_result($existing_report_no);
         if ($stmt->fetch()) {
             http_response_code(409);
-            echo json_encode(['status' => 'error', 'message' => '您已檢舉過此留言，待審中']);
+            echo json_encode(['status' => 'error', 'message' => '您已檢舉過此留言，待審中'], JSON_UNESCAPED_UNICODE);
             $stmt->close();
             exit;
         }
