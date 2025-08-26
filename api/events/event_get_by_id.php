@@ -11,7 +11,7 @@ if (!$event_no) {
 }
 
 // 撈一筆資料並撈出所有欄位
-$sql = "SELECT e.*, ec.category_name 
+$sql = "SELECT e.*, ec.category_name
         FROM events AS e
         LEFT JOIN events_categories AS ec ON e.category_no = ec.category_no
         WHERE e.event_no = ? 

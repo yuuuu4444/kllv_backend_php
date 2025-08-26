@@ -47,20 +47,27 @@ if ($fee_total > 0 && !$payment_no) {
     exit;
 }
 
+$initial_status = 0; // 預設狀態為0(未完成)
+// payment_no:1=信用卡,2=銀行轉帳,3=現金繳費
+if ($payment_no === 1 || $fee_total === 0) {
+    $initial_status = 1;
+}
+
+
 // 使用資料庫交易
 $mysqli->begin_transaction();
 try {
     // 1.新增訂單到 events_regs (訂單主表)
     $sql_reg = "INSERT INTO events_regs 
                 (event_no, participant_id, p_total, fee_total, payment_no, registered_at, status) 
-                VALUES (?, ?, ?, ?, ?, NOW(), 1)"; // 假設 status=1 代表報名成功
+                VALUES (?, ?, ?, ?, ?, NOW(), ?)"; 
     
     $stmt_reg = $mysqli->prepare($sql_reg);
-
+    // bind_param類型多了一個i，代表最後的status
     $payment_no_for_db = $payment_no ? (int)$payment_no : null;
     $fee_total_for_db = $fee_total !== null ? (int)$fee_total : 0;
-    
-    $stmt_reg->bind_param("isiii", $event_no, $loggedInUserId, $p_total, $fee_total_for_db, $payment_no_for_db);
+
+    $stmt_reg->bind_param("isiiii", $event_no, $loggedInUserId, $p_total, $fee_total_for_db, $payment_no_for_db, $initial_status);
     $stmt_reg->execute();
     // 獲取剛剛新增的訂單編號(reg_no)
     $reg_no = $mysqli->insert_id;
