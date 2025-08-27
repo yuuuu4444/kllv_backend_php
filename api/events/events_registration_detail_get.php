@@ -25,10 +25,18 @@ $sql = "SELECT
 $stmt = $mysqli->prepare($sql);
 $stmt->bind_param("i", $reg_no);
 $stmt->execute();
-$result = $stmt->get_result();
+$stmt->bind_result($fullname, $phone_number, $id_number, $birth_date, $econtact_name, $econtact_phone);
+
 $data = [];
-if ($result) {
-    $data = $result->fetch_all(MYSQLI_ASSOC);
+while ($stmt->fetch()) {
+    $data[] = [
+        'fullname'       => $fullname,
+        'phone_number'   => $phone_number,
+        'id_number'      => $id_number,
+        'birth_date'     => $birth_date,
+        'econtact_name'  => $econtact_name,
+        'econtact_phone' => $econtact_phone
+    ];
 }
 
 echo json_encode(['status' => 'success', 'data' => $data], JSON_UNESCAPED_UNICODE);

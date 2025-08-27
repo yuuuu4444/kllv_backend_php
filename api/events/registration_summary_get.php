@@ -35,8 +35,20 @@ $stmt = $mysqli->prepare($sql);
 $loggedInUserId = $_SESSION['user_id'];
 $stmt->bind_param("is", $reg_no, $loggedInUserId); // i for reg_no, s for user_id
 $stmt->execute();
-$result = $stmt->get_result();
-$data = $result->fetch_assoc();
+$stmt->bind_result($db_reg_no, $db_p_total, $db_fee_total, $db_event_title, $db_event_location, $db_event_start_date, $db_event_end_date);
+
+$data = null;
+if ($stmt->fetch()) {
+    $data = [
+        'reg_no'            => $db_reg_no,
+        'p_total'           => $db_p_total,
+        'fee_total'         => $db_fee_total,
+        'event_title'       => $db_event_title,
+        'event_location'    => $db_event_location,
+        'event_start_date'  => $db_event_start_date,
+        'event_end_date'    => $db_event_end_date
+    ];
+}
 
 if ($data) {
     echo json_encode(['status' => 'success', 'data' => $data]);

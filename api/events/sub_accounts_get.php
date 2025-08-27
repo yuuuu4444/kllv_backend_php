@@ -24,15 +24,14 @@ try {
     $stmt_household = $mysqli->prepare("SELECT household_no FROM users WHERE user_id = ?");
     $stmt_household->bind_param('s', $loggedInUserId);
     $stmt_household->execute();
-    $result_household = $stmt_household->get_result();
-    $user_info = $result_household->fetch_assoc();
+    $stmt_household->bind_result($household_no);
+    $stmt_household->fetch();
+    $stmt_household->close(); // 查完立刻關閉，好習慣
 
-    // 若找不到戶號，回傳一個空陣列
-    if (!$user_info || !$user_info['household_no']) {
+    if (empty($household_no)) {
         echo json_encode(['status' => 'success', 'data' => []]);
         exit;
     }
-    $household_no = $user_info['household_no'];
 
     // 2.查詢同一戶號下的「所有」成員
     $sql_members = "SELECT 
@@ -46,11 +45,19 @@ try {
     $stmt_members = $mysqli->prepare($sql_members);
     $stmt_members->bind_param('i', $household_no);
     $stmt_members->execute();
-    $result_members = $stmt_members->get_result();
+    $stmt_members->bind_result($user_id, $fullname, $id_number, $birth_date, $phone_number, $email, $address);
     
     $familyMembers = [];
-    if ($result_members) {
-        $familyMembers = $result_members->fetch_all(MYSQLI_ASSOC);
+    while ($stmt_members->fetch()) {
+        $familyMembers[] = [
+            'user_id' => $user_id,
+            'fullname' => $fullname,
+            'id_number' => $id_number,
+            'birth_date' => $birth_date,
+            'phone_number' => $phone_number,
+            'email' => $email,
+            'address' => $address
+        ];
     }
 
     echo json_encode(["status" => "success", "data" => $familyMembers]);
