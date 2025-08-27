@@ -1,14 +1,6 @@
 <?php
     require_once __DIR__ . '/../../common/env_init.php';
 
-    session_name('ADMINSESSID');
-    session_start();
-    if (!isset($_SESSION['admin_id'])) {
-        http_response_code(401);
-        echo json_encode(['status'=>'error','message'=>'管理者未登入']);
-        exit;
-    }
-
     // 從URL參數安全獲取event_no
     $event_no = filter_input(INPUT_GET, 'event_no', FILTER_VALIDATE_INT);
 
