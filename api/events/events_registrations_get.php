@@ -1,6 +1,14 @@
 <?php
     require_once __DIR__ . '/../../common/env_init.php';
 
+    session_name('ADMINSESSID');
+    session_start();
+    if (!isset($_SESSION['admin_id'])) {
+        http_response_code(401);
+        echo json_encode(['status'=>'error','message'=>'管理者未登入']);
+        exit;
+    }
+
     // 從URL參數安全獲取event_no
     $event_no = filter_input(INPUT_GET, 'event_no', FILTER_VALIDATE_INT);
 
@@ -30,17 +38,32 @@
     $stmt = $mysqli->prepare($sql);
     $stmt->bind_param("i", $event_no);
     $stmt->execute();
-    $result = $stmt->get_result();
+
+    $stmt->bind_result(
+        $reg_no, $fullname, $p_total, $fee_total, $registered_at,
+        $payment_name, $status, $event_title
+    );
+
     $data = [];
-    if ($result) {
-        $data = $result->fetch_all(MYSQLI_ASSOC);
+    while ($stmt->fetch()) {
+        $data[] = [
+            'reg_no'        => $reg_no,
+            'fullname'      => $fullname,
+            'p_total'       => $p_total,
+            'fee_total'     => $fee_total,
+            'registered_at' => $registered_at,
+            'payment_name'  => $payment_name,
+            'status'        => $status,
+            'event_title'   => $event_title
+        ];
     }
 
-    $event_title = empty($data) ? '未知活動' : ($data[0]['event_title'] ?? '標題未找到');
+    // 活動標題
+    $final_event_title = empty($data) ? '（尚無報名）' : ($data[0]['event_title'] ?? '活動標題');
 
     echo json_encode([
         'status' => 'success', 
-        'event_title' => $event_title,
+        'event_title' => $final_event_title,
         'data' => $data
     ], JSON_UNESCAPED_UNICODE);
 ?>
