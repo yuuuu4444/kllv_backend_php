@@ -4,17 +4,19 @@ require_once __DIR__ . '/../../common/env_init.php';
 // 檢查是否為POST
 if ($_SERVER["REQUEST_METHOD"] == "POST"){
 
-    $title          = trim($_POST['title'] ?? '');
-    $category_no    = filter_input(INPUT_POST, 'category', FILTER_VALIDATE_INT);
-    $location       = trim($_POST['location'] ?? '');
-    $image          = trim($_POST['image'] ?? '');
-    $description    = trim($_POST['description'] ?? '');
-    $fee_per_person = filter_input(INPUT_POST, 'fee_per_person', FILTER_VALIDATE_INT);
-    $p_limit        = filter_input(INPUT_POST, 'p_limit', FILTER_VALIDATE_INT);
-    $daterange      = $_POST['daterange'] ?? []; 
+    $input = json_decode(file_get_contents("php://input"), true);
+
+    $title          = trim($input['title'] ?? '');
+    $category_no    = filter_var($input['category'] ?? null, FILTER_VALIDATE_INT);
+    $location       = trim($input['location'] ?? '');
+    $image          = trim($input['image'] ?? '');
+    $description    = trim($input['description'] ?? '');
+    $fee_per_person = filter_var($input['fee_per_person'] ?? null, FILTER_VALIDATE_INT);
+    $p_limit        = filter_var($input['p_limit'] ?? null, FILTER_VALIDATE_INT);
+    $daterange      = $input['daterange'] ?? []; 
     $start_date     = $daterange[0] ?? '';
     $end_date       = $daterange[1] ?? '';
-    $reg_deadline   = trim($_POST['reg_deadline'] ?? '');
+    $reg_deadline   = trim($input['reg_deadline'] ?? '');
     
     if (empty($title) || empty($category_no) || empty($location) || empty($daterange) || empty($reg_deadline)) {
         http_response_code(422);
