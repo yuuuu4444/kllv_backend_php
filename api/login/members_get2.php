@@ -34,7 +34,7 @@
             email
           FROM users
           WHERE household_no = ?
-          AND is_active = 1
+          AND is_deleted = 0
           ORDER BY role_type";
 
   // 預備 SQL 語句，執行，綁定查詢結果
