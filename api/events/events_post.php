@@ -3,8 +3,15 @@ require_once __DIR__ . '/../../common/env_init.php';
 
 // 檢查是否為POST
 if ($_SERVER["REQUEST_METHOD"] == "POST"){
-
-    $input = json_decode(file_get_contents("php://input"), true);
+    // 1.嘗試讀取原始的request body
+    $raw_input = file_get_contents("php://input");
+    // 2.嘗試把原始body當作JSON來解碼
+    $input = json_decode($raw_input, true);
+    // 3. [防呆]如果JSON解碼失敗(結果不是陣列或為空)，就回頭去嘗試讀取傳統的$_POST表單資料。
+    //    (讓API同時相容兩種前端發送格式)
+    if (!is_array($input) || empty($input)) {
+        $input = $_POST;
+    }
 
     $title          = trim($input['title'] ?? '');
     $category_no    = filter_var($input['category'] ?? null, FILTER_VALIDATE_INT);
